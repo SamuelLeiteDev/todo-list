@@ -2,12 +2,20 @@ import { ChevronDown, CalendarDays } from "lucide-react";
 import React, { useState } from "react";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { useForm } from "react-hook-form";
+import { updateTaskStatus } from "../services/taskService.js";
 import { ptBR } from "date-fns/locale/pt-BR";
 registerLocale("pt-BR", ptBR);
 
 import "react-datepicker/dist/react-datepicker.css";
 
-export default function TaskItem({ titulo, descricao, vencimento, onSave }) {
+export default function TaskItem({
+  taskId,
+  status,
+  titulo,
+  descricao,
+  vencimento,
+  onSave,
+}) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [dataVencimento, setDataVencimento] = useState(
     vencimento ? new Date(vencimento) : null,
@@ -16,7 +24,7 @@ export default function TaskItem({ titulo, descricao, vencimento, onSave }) {
   // Inicializa o formulário com os valores recebidos via props
   const { register, handleSubmit, setValue } = useForm({
     defaultValues: {
-      status: false,
+      status: status === "finalizado", // para transformar em boolean
       titulo: titulo || "",
       descricao: descricao || "",
       vencimento: vencimento || "",
@@ -28,10 +36,26 @@ export default function TaskItem({ titulo, descricao, vencimento, onSave }) {
     setValue("vencimento", date);
   };
 
+  const handleStatusChange = async (e) => {
+    const isChecked = e.target.checked;
+
+    const novoStatus = isChecked ? "finalizado" : "pendente";
+
+    setValue("status", isChecked);
+
+    try {
+      await updateTaskStatus(taskId, novoStatus);
+    } catch (error) {
+      setValue("status", !isChecked);
+      alert("Não foi possível atualizar a tarefa. A alteração foi desfeita.");
+      console.error("Falha ao atualizar tarefa:", error);
+    }
+  };
+
   return (
     <form
       onSubmit={handleSubmit(onSave)}
-      className="bg-neutral-600 w-11/12 sm:w-8/12 md:w-11/12 rounded-md p-2 text-white flex flex-col gap-2"
+      className="bg-neutral-600 w-11/12 sm:w-8/12 md:w-11/12 rounded-xl p-2 text-white flex flex-col gap-2"
     >
       <div
         data-component="cabecalho-task"
@@ -41,11 +65,12 @@ export default function TaskItem({ titulo, descricao, vencimento, onSave }) {
           <input
             type="checkbox"
             {...register("status")}
-            className="cursor-pointer w-4 h-4"
+            onChange={handleStatusChange}
+            className="w-4 h-4 accent-gray-400 focus:ring-gray-600 cursor-pointer"
           />
           <textarea
             name="titulo"
-            className="bg-neutral-400 rounded-sm px-2 py-1 text-black w-full text-sm font-medium focus:outline-none resize-none custom-scrollbar"
+            className="bg-neutral-400 rounded-md px-2 py-1 text-black w-full text-sm font-semibold focus:outline-none resize-none custom-scrollbar"
             placeholder="Título da tarefa"
             defaultValue={titulo}
             wrap="soft"
@@ -71,7 +96,7 @@ export default function TaskItem({ titulo, descricao, vencimento, onSave }) {
           <textarea
             {...register("descricao")}
             placeholder="Descrição da tarefa"
-            className="bg-neutral-400 rounded-sm p-2 text-black w-full resize-y h-20 text-sm focus:outline-none scroll-smooth custom-scrollbar"
+            className="bg-neutral-400 rounded-md p-2 text-black w-full resize-y h-20 text-sm focus:outline-none scroll-smooth custom-scrollbar"
           />
         </div>
       )}
