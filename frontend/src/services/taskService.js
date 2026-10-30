@@ -33,3 +33,23 @@ export async function getTasks(userId) {
 
   return response.json();
 }
+
+export async function updateTask(taskId, dadosAtualizados) {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/tasks/${taskId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(dadosAtualizados),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("Erro ao atualizar a tarefa");
+  }
+
+  return await response.json();
+}

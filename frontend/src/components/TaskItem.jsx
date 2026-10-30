@@ -15,6 +15,7 @@ export default function TaskItem({
   descricao,
   vencimento,
   onSave,
+  onUpdate,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [dataVencimento, setDataVencimento] = useState(
@@ -27,13 +28,13 @@ export default function TaskItem({
       status: status === "finalizado", // para transformar em boolean
       titulo: titulo || "",
       descricao: descricao || "",
-      vencimento: vencimento || "",
+      data_vencimento: vencimento || "",
     },
   });
 
   const handleDateChange = (date) => {
     setDataVencimento(date);
-    setValue("vencimento", date);
+    setValue("data_vencimento", date);
   };
 
   const handleStatusChange = async (e) => {
@@ -45,6 +46,9 @@ export default function TaskItem({
 
     try {
       await updateTaskStatus(taskId, novoStatus);
+      if (onUpdate) {
+        onUpdate();
+      }
     } catch (error) {
       setValue("status", !isChecked);
       alert("Não foi possível atualizar a tarefa. A alteração foi desfeita.");
@@ -74,7 +78,9 @@ export default function TaskItem({
             placeholder="Título da tarefa"
             defaultValue={titulo}
             wrap="soft"
-            {...register("titulo")}
+            {...register("titulo", {
+              onBlur: handleSubmit(onSave),
+            })}
           ></textarea>
         </div>
 
@@ -94,7 +100,9 @@ export default function TaskItem({
       {isExpanded && (
         <div data-component="corpo-task">
           <textarea
-            {...register("descricao")}
+            {...register("descricao", {
+              onBlur: handleSubmit(onSave),
+            })}
             placeholder="Descrição da tarefa"
             className="bg-neutral-400 rounded-md p-2 text-black w-full resize-y h-20 text-sm focus:outline-none scroll-smooth custom-scrollbar"
           />
@@ -112,7 +120,11 @@ export default function TaskItem({
               locale="pt-BR"
               dateFormat="dd/MM/yyyy"
               selected={dataVencimento}
-              onChange={handleDateChange}
+              onChange={(date) => {
+                handleDateChange(date);
+                handleSubmit(onSave); // Salva automaticamente ao alterar a data
+              }}
+              onBlur={handleSubmit(onSave)}
               className="w-[10ch]"
             />
           ) : (
