@@ -1,4 +1,4 @@
-import { ChevronDown, CalendarDays } from "lucide-react";
+import { ChevronDown, CalendarDays, Trash } from "lucide-react";
 import React, { useState } from "react";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { useForm } from "react-hook-form";
@@ -16,6 +16,7 @@ export default function TaskItem({
   vencimento,
   onSave,
   onUpdate,
+  onDelete,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [dataVencimento, setDataVencimento] = useState(
@@ -32,7 +33,7 @@ export default function TaskItem({
     },
   });
 
-  const handleDateChange = (date) => {
+  const handleDateChange = async (date) => {
     setDataVencimento(date);
     setValue("data_vencimento", date);
   };
@@ -56,11 +57,14 @@ export default function TaskItem({
     }
   };
 
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete(taskId);
+    }
+  };
+
   return (
-    <form
-      onSubmit={handleSubmit(onSave)}
-      className="bg-neutral-600 w-11/12 sm:w-8/12 md:w-11/12 rounded-xl p-2 text-white flex flex-col gap-2"
-    >
+    <form className="bg-neutral-600 w-11/12 sm:w-8/12 md:w-11/12 rounded-xl p-2 h-auto text-white flex flex-col gap-2">
       <div
         data-component="cabecalho-task"
         className="flex gap-2 justify-between items-center"
@@ -111,8 +115,20 @@ export default function TaskItem({
 
       <div
         data-component="rodape-task"
-        className="flex items-center justify-end text-sm"
+        className="flex items-center justify-between text-sm"
       >
+        <div data-component="btn-excluir">
+          {isExpanded && (
+            <button
+              type="button"
+              className="hover:text-red-600 cursor-pointer"
+              onClick={handleDelete}
+              onMouseDown={(e) => e.preventDefault()}
+            >
+              <Trash size={18} />
+            </button>
+          )}
+        </div>
         <div className="flex items-center gap-1">
           <CalendarDays size={18} />
           {dataVencimento ? (
@@ -122,7 +138,7 @@ export default function TaskItem({
               selected={dataVencimento}
               onChange={(date) => {
                 handleDateChange(date);
-                handleSubmit(onSave); // Salva automaticamente ao alterar a data
+                handleSubmit(onSave)(); // Salva automaticamente ao alterar a data
               }}
               onBlur={handleSubmit(onSave)}
               className="w-[10ch]"

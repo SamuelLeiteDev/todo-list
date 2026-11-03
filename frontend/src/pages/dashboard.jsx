@@ -10,8 +10,13 @@ import {
 } from "lucide-react";
 import { useAuth } from "../contexts/useAuth.js";
 import TaskItem from "../components/TaskItem.jsx";
-import { getTasks, updateTask } from "../services/taskService.js";
-import { getHojeLocal } from "../utils/dateUtils";
+import {
+  getTasks,
+  updateTask,
+  createTask,
+  deleteTask,
+} from "../services/taskService.js";
+import { getHojeLocal, isDateInCurrentWeek } from "../utils/dateUtils";
 
 function Dashboard() {
   const hoje = getHojeLocal();
@@ -43,6 +48,7 @@ function Dashboard() {
   const handleSaveTask = async (taskId, formData) => {
     try {
       await updateTask(taskId, formData);
+      loadTasks();
     } catch (error) {
       console.error("Erro ao salvar tarefa:", error);
       alert("Não foi possível salvar as alterações.");
@@ -59,11 +65,41 @@ function Dashboard() {
         throw new Error("Erro ao buscar tarefas do usuário.");
       }
       setTasks(response.tasks);
-      //console.log(response);
     } catch (err) {
       console.error("Erro ao carregar tarefas:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const newTask = async (data_vencimento, status) => {
+    try {
+      const response = await createTask(user?.id, data_vencimento, status);
+
+      if (!user) return;
+
+      if (!response) {
+        throw new Error("Erro ao criar a nova tarefa.");
+      }
+      loadTasks();
+    } catch (error) {
+      console.error("Erro ao criar nova tarefa: ", error);
+    }
+  };
+
+  const handleDeleteTask = async (taskID) => {
+    try {
+      const response = await deleteTask(user?.id, taskID);
+
+      if (!user) return;
+
+      if (!response) {
+        throw new Error("Erro ao excluir a tarefa.");
+      }
+
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskID));
+    } catch (error) {
+      console.error("Erro ao deletar tarefa.", error);
     }
   };
 
@@ -80,18 +116,69 @@ function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col bg-background lg:flex-row overflow-x-auto h-full">
-      <div className="flex flex-col items-center min-h-40 lg:h-full min-w-80 gap-2">
-        <p className="flex items-center my-2">
-          <button className="bg-indigo-500 text-white p-0.5 rounded-2xl hover:bg-indigo-900 cursor-pointer">
+    <div className="flex flex-col bg-olive-900 lg:flex-row overflow-x-auto h-full justify-center">
+      <div
+        data-component="coluna-tasks-hoje"
+        className="flex w-full min-w-0 flex-col items-stretch bg-indigo-200 lg:h-full lg:w-80 lg:items-center"
+      >
+        <p className="flex items-center self-center my-2 bg-black text-white p-2 rounded-xl">
+          <button
+            className="bg-indigo-500 text-white p-0.5 rounded-2xl hover:bg-indigo-900 cursor-pointer"
+            onClick={() => newTask(hoje, "pendente")}
+          >
             <Plus size={18} />
           </button>
           ⌚ Tasks de Hoje
         </p>
+
+        <div
+          data-component="taks-items"
+          className="flex flex-row gap-2 px-2 py-2 overflow-x-auto overflow-y-hidden
+               lg:flex-col lg:items-center lg:overflow-x-visible lg:overflow-y-auto lg:px-0
+               scrollbar-none [&::-webkit-scrollbar]:hidden"
+        >
+          {tasks
+            .filter((task) => {
+              if (!task.data_vencimento) return false;
+              const dataTask = task.data_vencimento.split("T")[0];
+              return task.status === "pendente" && dataTask === hoje;
+            })
+            .map((task) => (
+              <div
+                key={task.id}
+                className="shrink-0 w-[80vw] lg:w-75 lg:shrink flex justify-center"
+              >
+                <TaskItem
+                  taskId={task.id}
+                  status={task.status}
+                  titulo={task.titulo}
+                  descricao={task.descricao}
+                  vencimento={task.data_vencimento}
+                  onSave={(formData) => handleSaveTask(task.id, formData)}
+                  onUpdate={loadTasks}
+                  onDelete={handleDeleteTask}
+                />
+              </div>
+            ))}
+        </div>
+      </div>
+      <div className="flex flex-col items-center min-h-40 lg:h-full min-w-80 gap-2 bg-indigo-400">
+        <p className="bg-black text-white p-2 rounded-xl my-2">
+          <button
+            className="bg-indigo-500 text-white p-0.5 rounded-2xl hover:bg-indigo-900 cursor-pointer"
+            onClick={() => newTask(null, "pendente")}
+          >
+            <Plus size={18} />
+          </button>
+          ⌛ Tasks Pendentes
+        </p>
         {tasks.length === 0
           ? null
           : tasks
-              .filter((task) => task.data_vencimento === hoje)
+              .filter(
+                (task) =>
+                  task.status === "pendente" && task.data_vencimento === null,
+              )
               .map((task) => (
                 <TaskItem
                   key={task.id}
@@ -102,15 +189,28 @@ function Dashboard() {
                   vencimento={task.data_vencimento}
                   onSave={(formData) => handleSaveTask(task.id, formData)}
                   onUpdate={loadTasks}
+                  onDelete={handleDeleteTask}
                 />
               ))}
       </div>
-      <div className="flex flex-col items-center min-h-40 lg:h-full min-w-80 gap-2">
-        <p>⌛ Tasks Pendentes</p>
+      <div className="flex flex-col items-center min-h-40 lg:h-full min-w-80 gap-2 bg-indigo-200">
+        <p className="bg-black text-white p-2 rounded-xl my-2">
+          ⏳ Tasks dessa semana
+        </p>
         {tasks.length === 0
           ? null
           : tasks
-              .filter((task) => task.status === "pendente")
+              .filter((task) => {
+                if (!task.data_vencimento) return false;
+
+                const dataTask = task.data_vencimento.split("T")[0];
+
+                return (
+                  task.status === "pendente" &&
+                  isDateInCurrentWeek(dataTask) &&
+                  dataTask !== hoje
+                );
+              })
               .map((task) => (
                 <TaskItem
                   key={task.id}
@@ -121,17 +221,46 @@ function Dashboard() {
                   vencimento={task.data_vencimento}
                   onSave={(formData) => handleSaveTask(task.id, formData)}
                   onUpdate={loadTasks}
+                  onDelete={handleDeleteTask}
                 />
               ))}
       </div>
-      <div className="flex flex-col items-center min-h-40 lg:h-full min-w-80 gap-2">
-        <p>⏳ Tasks dessa semana</p>
+      <div className="flex flex-col items-center min-h-40 lg:h-full min-w-80 gap-2 bg-indigo-400">
+        <p className="bg-black text-white p-2 rounded-xl my-2">
+          🗓️ Tasks a prazo
+        </p>
+        {tasks.length === 0
+          ? null
+          : tasks
+              .filter((task) => {
+                if (!task.data_vencimento) return false;
+
+                const dataTask = task.data_vencimento.split("T")[0];
+
+                return (
+                  task.status === "pendente" &&
+                  !isDateInCurrentWeek(dataTask) &&
+                  dataTask !== hoje
+                );
+              })
+              .map((task) => (
+                <TaskItem
+                  key={task.id}
+                  taskId={task.id}
+                  status={task.status}
+                  titulo={task.titulo}
+                  descricao={task.descricao}
+                  vencimento={task.data_vencimento}
+                  onSave={(formData) => handleSaveTask(task.id, formData)}
+                  onUpdate={loadTasks}
+                  onDelete={handleDeleteTask}
+                />
+              ))}
       </div>
-      <div className="flex flex-col items-center min-h-40 lg:h-full min-w-80 gap-2">
-        <p>🗓️ Tasks a prazo</p>
-      </div>
-      <div className="flex flex-col items-center min-h-40 lg:h-full min-w-80 gap-2">
-        <p>✅ Tasks Concluídas</p>
+      <div className="flex flex-col items-center min-h-40 lg:h-full min-w-80 gap-2 bg-indigo-200">
+        <p className="bg-black text-white p-2 rounded-xl my-2">
+          ✅ Tasks Concluídas
+        </p>
         {tasks.length === 0
           ? null
           : tasks
