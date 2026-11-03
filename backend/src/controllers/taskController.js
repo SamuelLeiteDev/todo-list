@@ -129,8 +129,8 @@ const TaskController = {
         return sendValidationError("Título é obrigatório.");
       }
 
-      taskData.data_vencimento =
-        taskData.data_vencimento || new Date().toISOString().slice(0, 10);
+      // taskData.data_vencimento =
+      //   taskData.data_vencimento || new Date().toISOString().slice(0, 10);
       taskData.status = taskData.status || "PENDENTE";
       /* FIM VALIDAÇÕES */
 

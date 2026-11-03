@@ -17,6 +17,9 @@ const Tasks = {
   async updateTask(user_id, data) {
     const { titulo, descricao, prioridade, data_vencimento, id } = data;
 
+    const vencimentoFormatado =
+      data_vencimento && data_vencimento !== "" ? data_vencimento : null;
+
     const query = `
       UPDATE tasks SET (titulo, descricao, prioridade, data_vencimento)
       = ($1, $2, $3, $4) WHERE id = $5 AND user_id = $6
@@ -26,7 +29,7 @@ const Tasks = {
       titulo,
       descricao,
       prioridade,
-      data_vencimento,
+      vencimentoFormatado,
       id,
       user_id,
     ];
