@@ -116,10 +116,10 @@ function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col bg-olive-900 lg:flex-row overflow-x-auto h-full justify-center">
+    <div className="flex flex-col bg-olive-900 lg:flex-row overflow-x-auto h-full justify-center lg:overflow-y-hidden">
       <div
         data-component="coluna-tasks-hoje"
-        className="flex w-full min-w-0 flex-col items-stretch bg-indigo-200 lg:h-full lg:w-80 lg:items-center"
+        className="flex w-full min-w-0 flex-col items-stretch bg-indigo-200 lg:h-full lg:w-80 lg:items-center lg:overflow-y-auto"
       >
         <p className="flex items-center self-center my-2 bg-black text-white p-2 rounded-xl">
           <button
@@ -132,8 +132,8 @@ function Dashboard() {
         </p>
 
         <div
-          data-component="taks-items"
-          className="flex flex-row gap-2 px-2 py-2 overflow-x-auto overflow-y-hidden
+          data-component="taks-items-hoje"
+          className="flex flex-row items-start gap-2 px-2 py-2 overflow-x-auto overflow-y-hidden
                lg:flex-col lg:items-center lg:overflow-x-visible lg:overflow-y-auto lg:px-0
                scrollbar-none [&::-webkit-scrollbar]:hidden"
         >
@@ -162,8 +162,8 @@ function Dashboard() {
             ))}
         </div>
       </div>
-      <div className="flex flex-col items-center min-h-40 lg:h-full min-w-80 gap-2 bg-indigo-400">
-        <p className="bg-black text-white p-2 rounded-xl my-2">
+      <div className="flex w-full min-w-0 flex-col items-stretch bg-indigo-400 lg:h-full lg:w-80 lg:items-center lg:overflow-y-auto">
+        <p className="flex items-center self-center my-2 bg-black text-white p-2 rounded-xl">
           <button
             className="bg-indigo-500 text-white p-0.5 rounded-2xl hover:bg-indigo-900 cursor-pointer"
             onClick={() => newTask(null, "pendente")}
@@ -172,111 +172,160 @@ function Dashboard() {
           </button>
           ⌛ Tasks Pendentes
         </p>
-        {tasks.length === 0
-          ? null
-          : tasks
-              .filter(
-                (task) =>
-                  task.status === "pendente" && task.data_vencimento === null,
-              )
-              .map((task) => (
-                <TaskItem
-                  key={task.id}
-                  taskId={task.id}
-                  status={task.status}
-                  titulo={task.titulo}
-                  descricao={task.descricao}
-                  vencimento={task.data_vencimento}
-                  onSave={(formData) => handleSaveTask(task.id, formData)}
-                  onUpdate={loadTasks}
-                  onDelete={handleDeleteTask}
-                />
-              ))}
+        <div
+          data-component="taks-items-pendente"
+          className="flex flex-row items-start gap-2 px-2 py-2 overflow-x-auto overflow-y-hidden
+               lg:flex-col lg:items-center lg:overflow-x-visible lg:overflow-y-auto lg:px-0
+               scrollbar-none [&::-webkit-scrollbar]:hidden"
+        >
+          {tasks.length === 0
+            ? null
+            : tasks
+                .filter(
+                  (task) =>
+                    task.status === "pendente" && task.data_vencimento === null,
+                )
+                .map((task) => (
+                  <div
+                    key={task.id}
+                    className="shrink-0 w-[80vw] lg:w-75 lg:shrink flex justify-center"
+                  >
+                    <TaskItem
+                      key={task.id}
+                      taskId={task.id}
+                      status={task.status}
+                      titulo={task.titulo}
+                      descricao={task.descricao}
+                      vencimento={task.data_vencimento}
+                      onSave={(formData) => handleSaveTask(task.id, formData)}
+                      onUpdate={loadTasks}
+                      onDelete={handleDeleteTask}
+                    />
+                  </div>
+                ))}
+        </div>
       </div>
-      <div className="flex flex-col items-center min-h-40 lg:h-full min-w-80 gap-2 bg-indigo-200">
-        <p className="bg-black text-white p-2 rounded-xl my-2">
+      <div className="flex w-full min-w-0 flex-col items-stretch bg-indigo-200 lg:h-full lg:w-80 lg:items-center lg:overflow-y-auto">
+        <p className="flex items-center self-center my-2 bg-black text-white p-2 rounded-xl">
           ⏳ Tasks dessa semana
         </p>
-        {tasks.length === 0
-          ? null
-          : tasks
-              .filter((task) => {
-                if (!task.data_vencimento) return false;
+        <div
+          data-component="taks-items-semana"
+          className="flex flex-row items-start gap-2 px-2 py-2 overflow-x-auto overflow-y-hidden
+               lg:flex-col lg:items-center lg:overflow-x-visible lg:overflow-y-auto lg:px-0
+               scrollbar-none [&::-webkit-scrollbar]:hidden"
+        >
+          {tasks.length === 0
+            ? null
+            : tasks
+                .filter((task) => {
+                  if (!task.data_vencimento) return false;
 
-                const dataTask = task.data_vencimento.split("T")[0];
+                  const dataTask = task.data_vencimento.split("T")[0];
 
-                return (
-                  task.status === "pendente" &&
-                  isDateInCurrentWeek(dataTask) &&
-                  dataTask !== hoje
-                );
-              })
-              .map((task) => (
-                <TaskItem
-                  key={task.id}
-                  taskId={task.id}
-                  status={task.status}
-                  titulo={task.titulo}
-                  descricao={task.descricao}
-                  vencimento={task.data_vencimento}
-                  onSave={(formData) => handleSaveTask(task.id, formData)}
-                  onUpdate={loadTasks}
-                  onDelete={handleDeleteTask}
-                />
-              ))}
+                  return (
+                    task.status === "pendente" &&
+                    isDateInCurrentWeek(dataTask) &&
+                    dataTask !== hoje
+                  );
+                })
+                .map((task) => (
+                  <div
+                    key={task.id}
+                    className="shrink-0 w-[80vw] lg:w-75 lg:shrink flex justify-center"
+                  >
+                    <TaskItem
+                      key={task.id}
+                      taskId={task.id}
+                      status={task.status}
+                      titulo={task.titulo}
+                      descricao={task.descricao}
+                      vencimento={task.data_vencimento}
+                      onSave={(formData) => handleSaveTask(task.id, formData)}
+                      onUpdate={loadTasks}
+                      onDelete={handleDeleteTask}
+                    />
+                  </div>
+                ))}
+        </div>
       </div>
-      <div className="flex flex-col items-center min-h-40 lg:h-full min-w-80 gap-2 bg-indigo-400">
-        <p className="bg-black text-white p-2 rounded-xl my-2">
+      <div className="flex w-full min-w-0 flex-col items-stretch bg-indigo-400 lg:h-full lg:w-80 lg:items-center lg:overflow-y-auto">
+        <p className="flex items-center self-center my-2 bg-black text-white p-2 rounded-xl">
           🗓️ Tasks a prazo
         </p>
-        {tasks.length === 0
-          ? null
-          : tasks
-              .filter((task) => {
-                if (!task.data_vencimento) return false;
+        <div
+          data-component="taks-items-prazo"
+          className="flex flex-row items-start gap-2 px-2 py-2 overflow-x-auto overflow-y-hidden
+               lg:flex-col lg:items-center lg:overflow-x-visible lg:overflow-y-auto lg:px-0
+               scrollbar-none [&::-webkit-scrollbar]:hidden"
+        >
+          {tasks.length === 0
+            ? null
+            : tasks
+                .filter((task) => {
+                  if (!task.data_vencimento) return false;
 
-                const dataTask = task.data_vencimento.split("T")[0];
+                  const dataTask = task.data_vencimento.split("T")[0];
 
-                return (
-                  task.status === "pendente" &&
-                  !isDateInCurrentWeek(dataTask) &&
-                  dataTask !== hoje
-                );
-              })
-              .map((task) => (
-                <TaskItem
-                  key={task.id}
-                  taskId={task.id}
-                  status={task.status}
-                  titulo={task.titulo}
-                  descricao={task.descricao}
-                  vencimento={task.data_vencimento}
-                  onSave={(formData) => handleSaveTask(task.id, formData)}
-                  onUpdate={loadTasks}
-                  onDelete={handleDeleteTask}
-                />
-              ))}
+                  return (
+                    task.status === "pendente" &&
+                    !isDateInCurrentWeek(dataTask) &&
+                    dataTask !== hoje
+                  );
+                })
+                .map((task) => (
+                  <div
+                    key={task.id}
+                    className="shrink-0 w-[80vw] lg:w-75 lg:shrink flex justify-center"
+                  >
+                    <TaskItem
+                      key={task.id}
+                      taskId={task.id}
+                      status={task.status}
+                      titulo={task.titulo}
+                      descricao={task.descricao}
+                      vencimento={task.data_vencimento}
+                      onSave={(formData) => handleSaveTask(task.id, formData)}
+                      onUpdate={loadTasks}
+                      onDelete={handleDeleteTask}
+                    />
+                  </div>
+                ))}
+        </div>
       </div>
-      <div className="flex flex-col items-center min-h-40 lg:h-full min-w-80 gap-2 bg-indigo-200">
-        <p className="bg-black text-white p-2 rounded-xl my-2">
+      <div className="flex w-full min-w-0 flex-col items-stretch bg-indigo-200 lg:h-full lg:w-80 lg:items-center lg:overflow-y-auto">
+        <p className="flex items-center self-center my-2 bg-black text-white p-2 rounded-xl">
           ✅ Tasks Concluídas
         </p>
-        {tasks.length === 0
-          ? null
-          : tasks
-              .filter((task) => task.status === "finalizado")
-              .map((task) => (
-                <TaskItem
-                  key={task.id}
-                  taskId={task.id}
-                  status={task.status}
-                  titulo={task.titulo}
-                  descricao={task.descricao}
-                  vencimento={task.data_vencimento}
-                  onSave={(formData) => handleSaveTask(task.id, formData)}
-                  onUpdate={loadTasks}
-                />
-              ))}
+        <div
+          data-component="taks-items-prazo"
+          className="flex flex-row items-start gap-2 px-2 py-2 overflow-x-auto overflow-y-hidden
+               lg:flex-col lg:items-center lg:overflow-x-visible lg:overflow-y-auto lg:px-0
+               scrollbar-none [&::-webkit-scrollbar]:hidden"
+        >
+          {tasks.length === 0
+            ? null
+            : tasks
+                .filter((task) => task.status === "finalizado")
+                .map((task) => (
+                  <div
+                    key={task.id}
+                    className="shrink-0 w-[80vw] lg:w-75 lg:shrink flex justify-center"
+                  >
+                    <TaskItem
+                      key={task.id}
+                      taskId={task.id}
+                      status={task.status}
+                      titulo={task.titulo}
+                      descricao={task.descricao}
+                      vencimento={task.data_vencimento}
+                      onSave={(formData) => handleSaveTask(task.id, formData)}
+                      onUpdate={loadTasks}
+                      onDelete={handleDeleteTask}
+                    />
+                  </div>
+                ))}
+        </div>
       </div>
     </div>
   );

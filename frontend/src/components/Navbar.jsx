@@ -21,7 +21,6 @@ function Navbar() {
         <span className="text-white">Olá, {user?.nome}</span>
         <div data-component="navbar-menu" className="flex gap-5 text-text-menu">
           <Link to="/dashboard">Minhas Tarefas</Link>
-          <Link to="/profile">Perfil</Link>
         </div>
         <button
           onClick={handleLogout}
