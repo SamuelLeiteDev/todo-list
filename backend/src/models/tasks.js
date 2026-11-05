@@ -20,6 +20,9 @@ const Tasks = {
     const vencimentoFormatado =
       data_vencimento && data_vencimento !== "" ? data_vencimento : null;
 
+    const prioridadeTratada =
+      prioridade && prioridade !== "" ? prioridade : null;
+
     const query = `
       UPDATE tasks SET (titulo, descricao, prioridade, data_vencimento)
       = ($1, $2, $3, $4) WHERE id = $5 AND user_id = $6
@@ -28,7 +31,7 @@ const Tasks = {
     const values = [
       titulo,
       descricao,
-      prioridade,
+      prioridadeTratada,
       vencimentoFormatado,
       id,
       user_id,

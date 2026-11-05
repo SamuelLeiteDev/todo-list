@@ -1,4 +1,4 @@
-import { ChevronDown, CalendarDays, Trash } from "lucide-react";
+import { ChevronDown, CalendarDays, Trash, Plus } from "lucide-react";
 import React, { useState } from "react";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { useForm } from "react-hook-form";
@@ -11,6 +11,7 @@ import "react-datepicker/dist/react-datepicker.css";
 export default function TaskItem({
   taskId,
   status,
+  prioridade,
   titulo,
   descricao,
   vencimento,
@@ -65,6 +66,56 @@ export default function TaskItem({
 
   return (
     <form className="bg-neutral-600 w-11/12 sm:w-8/12 md:w-11/12 rounded-xl p-2 h-auto text-white flex flex-col gap-2">
+      {isExpanded && prioridade === null && (
+        <div
+          data-component="prioridade"
+          className="flex items-center gap-2 px-2 bg-amber-200 rounded-md w-fit text-black font-medium hover:bg-amber-400 cursor-pointer"
+        >
+          <Plus size={18} />
+          <label for="prioridade">Prioridade:</label>
+          <select
+            name="prioridade"
+            id="prioridade"
+            className="cursor-pointer outline-none"
+            {...register("prioridade", {
+              onChange: () => {
+                handleSubmit(onSave)();
+              },
+            })}
+          >
+            <option value="">Selecione...</option>
+            <option value="baixa">Baixa</option>
+            <option value="media">Média</option>
+            <option value="alta">Alta</option>
+          </select>
+        </div>
+      )}
+
+      {prioridade !== null && (
+        <p
+          className={`flex items-center gap-2 px-2rounded-md w-fit text-black font-medium cursor-pointer rounded-md 
+          ${prioridade === "baixa" ? "bg-green-200" : null}
+          ${prioridade === "media" ? "bg-amber-200" : null}
+          ${prioridade === "alta" ? "bg-red-400" : null}`}
+        >
+          <select
+            name="prioridade"
+            id="prioridade"
+            className="cursor-pointer outline-none"
+            {...register("prioridade", {
+              onChange: () => {
+                handleSubmit(onSave)();
+              },
+            })}
+          >
+            <option value="baixa">Baixa</option>
+            <option value="media">Média</option>
+            <option value="alta">Alta</option>
+            <option value="">Sem prioridade</option>
+          </select>
+        </p>
+      )}
+
       <div
         data-component="cabecalho-task"
         className="flex gap-2 justify-between items-center"

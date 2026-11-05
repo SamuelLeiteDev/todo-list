@@ -116,10 +116,10 @@ function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col bg-olive-900 lg:flex-row overflow-x-auto h-full justify-center lg:overflow-y-hidden">
+    <div className="flex flex-col bg-olive-900 lg:flex-row overflow-x-auto h-full lg:justify-center lg:overflow-y-hidden">
       <div
         data-component="coluna-tasks-hoje"
-        className="flex w-full min-w-0 flex-col items-stretch bg-indigo-200 lg:h-full lg:w-80 lg:items-center lg:overflow-y-auto"
+        className="flex w-full min-w-0 flex-col items-stretch bg-indigo-200 lg:h-full lg:w-3/12 lg:items-center lg:overflow-y-auto"
       >
         <p className="flex items-center self-center my-2 bg-black text-white p-2 rounded-xl">
           <button
@@ -134,7 +134,7 @@ function Dashboard() {
         <div
           data-component="taks-items-hoje"
           className="flex flex-row items-start gap-2 px-2 py-2 overflow-x-auto overflow-y-hidden
-               lg:flex-col lg:items-center lg:overflow-x-visible lg:overflow-y-auto lg:px-0
+               lg:flex-col lg:items-center lg:w-full lg:overflow-x-visible lg:overflow-y-auto lg:px-0
                scrollbar-none [&::-webkit-scrollbar]:hidden"
         >
           {tasks
@@ -146,11 +146,12 @@ function Dashboard() {
             .map((task) => (
               <div
                 key={task.id}
-                className="shrink-0 w-[80vw] lg:w-75 lg:shrink flex justify-center"
+                className="shrink-0 w-full flex justify-center"
               >
                 <TaskItem
                   taskId={task.id}
                   status={task.status}
+                  prioridade={task.prioridade}
                   titulo={task.titulo}
                   descricao={task.descricao}
                   vencimento={task.data_vencimento}
@@ -162,7 +163,7 @@ function Dashboard() {
             ))}
         </div>
       </div>
-      <div className="flex w-full min-w-0 flex-col items-stretch bg-indigo-400 lg:h-full lg:w-80 lg:items-center lg:overflow-y-auto">
+      <div className="flex w-full min-w-0 flex-col items-stretch bg-indigo-400 lg:h-full lg:w-3/12 lg:items-center lg:overflow-y-auto">
         <p className="flex items-center self-center my-2 bg-black text-white p-2 rounded-xl">
           <button
             className="bg-indigo-500 text-white p-0.5 rounded-2xl hover:bg-indigo-900 cursor-pointer"
@@ -175,7 +176,7 @@ function Dashboard() {
         <div
           data-component="taks-items-pendente"
           className="flex flex-row items-start gap-2 px-2 py-2 overflow-x-auto overflow-y-hidden
-               lg:flex-col lg:items-center lg:overflow-x-visible lg:overflow-y-auto lg:px-0
+               lg:flex-col lg:items-center lg:w-full lg:overflow-x-visible lg:overflow-y-auto lg:px-0
                scrollbar-none [&::-webkit-scrollbar]:hidden"
         >
           {tasks.length === 0
@@ -188,11 +189,12 @@ function Dashboard() {
                 .map((task) => (
                   <div
                     key={task.id}
-                    className="shrink-0 w-[80vw] lg:w-75 lg:shrink flex justify-center"
+                    className="shrink-0 w-full flex justify-center"
                   >
                     <TaskItem
                       key={task.id}
                       taskId={task.id}
+                      prioridade={task.prioridade}
                       status={task.status}
                       titulo={task.titulo}
                       descricao={task.descricao}
@@ -205,14 +207,14 @@ function Dashboard() {
                 ))}
         </div>
       </div>
-      <div className="flex w-full min-w-0 flex-col items-stretch bg-indigo-200 lg:h-full lg:w-80 lg:items-center lg:overflow-y-auto">
+      <div className="flex w-full min-w-0 flex-col items-stretch bg-indigo-200 lg:h-full lg:w-3/12 lg:items-center lg:overflow-y-auto">
         <p className="flex items-center self-center my-2 bg-black text-white p-2 rounded-xl">
           ⏳ Tasks dessa semana
         </p>
         <div
           data-component="taks-items-semana"
           className="flex flex-row items-start gap-2 px-2 py-2 overflow-x-auto overflow-y-hidden
-               lg:flex-col lg:items-center lg:overflow-x-visible lg:overflow-y-auto lg:px-0
+               lg:flex-col lg:items-center lg:w-full lg:overflow-x-visible lg:overflow-y-auto lg:px-0
                scrollbar-none [&::-webkit-scrollbar]:hidden"
         >
           {tasks.length === 0
@@ -232,12 +234,13 @@ function Dashboard() {
                 .map((task) => (
                   <div
                     key={task.id}
-                    className="shrink-0 w-[80vw] lg:w-75 lg:shrink flex justify-center"
+                    className="shrink-0 w-full flex justify-center"
                   >
                     <TaskItem
                       key={task.id}
                       taskId={task.id}
                       status={task.status}
+                      prioridade={task.prioridade}
                       titulo={task.titulo}
                       descricao={task.descricao}
                       vencimento={task.data_vencimento}
@@ -249,14 +252,14 @@ function Dashboard() {
                 ))}
         </div>
       </div>
-      <div className="flex w-full min-w-0 flex-col items-stretch bg-indigo-400 lg:h-full lg:w-80 lg:items-center lg:overflow-y-auto">
+      <div className="flex w-full min-w-0 flex-col items-stretch bg-indigo-400 lg:h-full lg:w-3/12 lg:items-center lg:overflow-y-auto">
         <p className="flex items-center self-center my-2 bg-black text-white p-2 rounded-xl">
           🗓️ Tasks a prazo
         </p>
         <div
           data-component="taks-items-prazo"
           className="flex flex-row items-start gap-2 px-2 py-2 overflow-x-auto overflow-y-hidden
-               lg:flex-col lg:items-center lg:overflow-x-visible lg:overflow-y-auto lg:px-0
+               lg:flex-col lg:items-center lg:w-full lg:overflow-x-visible lg:overflow-y-auto lg:px-0
                scrollbar-none [&::-webkit-scrollbar]:hidden"
         >
           {tasks.length === 0
@@ -276,12 +279,13 @@ function Dashboard() {
                 .map((task) => (
                   <div
                     key={task.id}
-                    className="shrink-0 w-[80vw] lg:w-75 lg:shrink flex justify-center"
+                    className="shrink-0 w-full flex justify-center"
                   >
                     <TaskItem
                       key={task.id}
                       taskId={task.id}
                       status={task.status}
+                      prioridade={task.prioridade}
                       titulo={task.titulo}
                       descricao={task.descricao}
                       vencimento={task.data_vencimento}
@@ -293,14 +297,14 @@ function Dashboard() {
                 ))}
         </div>
       </div>
-      <div className="flex w-full min-w-0 flex-col items-stretch bg-indigo-200 lg:h-full lg:w-80 lg:items-center lg:overflow-y-auto">
+      <div className="flex w-full min-w-0 flex-col items-stretch bg-indigo-200 lg:h-full lg:w-3/12 lg:items-center lg:overflow-y-auto">
         <p className="flex items-center self-center my-2 bg-black text-white p-2 rounded-xl">
           ✅ Tasks Concluídas
         </p>
         <div
           data-component="taks-items-prazo"
           className="flex flex-row items-start gap-2 px-2 py-2 overflow-x-auto overflow-y-hidden
-               lg:flex-col lg:items-center lg:overflow-x-visible lg:overflow-y-auto lg:px-0
+               lg:flex-col lg:items-center lg:w-full lg:overflow-x-visible lg:overflow-y-auto lg:px-0
                scrollbar-none [&::-webkit-scrollbar]:hidden"
         >
           {tasks.length === 0
@@ -310,12 +314,13 @@ function Dashboard() {
                 .map((task) => (
                   <div
                     key={task.id}
-                    className="shrink-0 w-[80vw] lg:w-75 lg:shrink flex justify-center"
+                    className="shrink-0 w-full flex justify-center"
                   >
                     <TaskItem
                       key={task.id}
                       taskId={task.id}
                       status={task.status}
+                      prioridade={task.prioridade}
                       titulo={task.titulo}
                       descricao={task.descricao}
                       vencimento={task.data_vencimento}
