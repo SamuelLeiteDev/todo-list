@@ -6,7 +6,7 @@ Sistema de todo com autenticação JWT + CRUD
 
 - [x] Registro e login de usuário
 - [x] Criar, Deletar, Editar task
-- [ ] Categorização por tags personalisaveis (Alta prioridade, média prioridade, urgente ...)
+- [x] Categorização por tags personalisaveis (Alta prioridade, média prioridade, urgente ...)
 - [x] Prazo das tasks configuráveis
 
 ## 💻 Tecnologias
