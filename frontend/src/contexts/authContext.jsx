@@ -5,7 +5,7 @@ import {
   registerUser,
   logoutUser,
   getMe,
-} from "../services/authServices.jsx";
+} from "../services/authServices.js";
 
 export const AuthContext = createContext(null);
 
