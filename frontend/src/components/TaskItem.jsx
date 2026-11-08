@@ -102,6 +102,7 @@ export default function TaskItem({
             name="prioridade"
             id="prioridade"
             className="cursor-pointer outline-none"
+            value={prioridade}
             {...register("prioridade", {
               onChange: () => {
                 handleSubmit(onSave)();

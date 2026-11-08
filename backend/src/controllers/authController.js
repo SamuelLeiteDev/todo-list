@@ -37,7 +37,7 @@ const AuthController = {
         !hasNumber ||
         !hasSpecialChar
       ) {
-        passwordErrorMessage();
+        return passwordErrorMessage();
       }
 
       // 1. Verifica se o e-mail já existe

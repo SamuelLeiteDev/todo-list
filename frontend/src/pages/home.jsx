@@ -13,7 +13,7 @@ function Home() {
 
         {/* Textos de boas-vindas */}
         <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-          Bem vindo ao todo-list que resolve!
+          Bem vindo ao to-do list que resolve!
         </h1>
         <p className="mt-2 text-sm text-neutral-400">
           É um prazer recebê-lo! Cadastre-se agora mesmo e comece a listar suas

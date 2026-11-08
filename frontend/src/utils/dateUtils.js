@@ -14,8 +14,8 @@ export function isDateInCurrentWeek(dateStr) {
   const hoje = new Date();
 
   // Define o início e o fim da semana atual (começando na segunda-feira = 1)
-  const start = startOfWeek(hoje, { weekStartsOn: 1 });
-  const end = endOfWeek(hoje, { weekStartsOn: 1 });
+  const start = startOfWeek(hoje, { weekStartsOn: 0 });
+  const end = endOfWeek(hoje, { weekStartsOn: 0 });
 
   // Verifica se a data está dentro desse intervalo
   return isWithinInterval(date, { start, end });
