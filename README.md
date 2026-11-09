@@ -2,6 +2,10 @@
 
 Sistema de todo com autenticação JWT + CRUD
 
+## 🎥 Apresentação
+
+[![Apresentação do projeto](https://img.youtube.com/vi/mUj31fXFoxc/maxresdefault.jpg)](https://youtu.be/mUj31fXFoxc)
+
 ## 🛠️ Funcionalidades
 
 - [x] Registro e login de usuário
